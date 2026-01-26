@@ -86,7 +86,7 @@ pub trait BlockBody:
 
     /// Returns an iterator over all transaction hashes in the block body.
     fn transaction_hashes_iter(&self) -> impl Iterator<Item = &B256> + '_ {
-        self.transactions_iter().map(|tx| tx.tx_hash())
+        self.transactions_iter().map(TxHashRef::tx_hash)
     }
 
     /// Returns the number of the transactions in the block.
@@ -131,7 +131,7 @@ pub trait BlockBody:
 
     /// Calculates the total blob gas used by _all_ EIP-4844 transactions in the block.
     fn blob_gas_used(&self) -> u64 {
-        self.transactions_iter().filter_map(|tx| tx.blob_gas_used()).sum()
+        self.transactions_iter().filter_map(Transaction::blob_gas_used).sum()
     }
 
     /// Returns an iterator over all blob versioned hashes in the block body.
@@ -146,7 +146,7 @@ pub trait BlockBody:
     /// See also [`Encodable2718`].
     #[doc(alias = "raw_transactions_iter")]
     fn encoded_2718_transactions_iter(&self) -> impl Iterator<Item = Vec<u8>> + '_ {
-        self.transactions_iter().map(|tx| tx.encoded_2718())
+        self.transactions_iter().map(Encodable2718::encoded_2718)
     }
 
     /// Returns a vector of encoded 2718 transactions.
